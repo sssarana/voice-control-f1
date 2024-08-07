@@ -59,7 +59,8 @@ class VoiceControlNode(Node):
 
                     for cmd in self.command_list:
                         if cmd in command:
-                            self.publish_command(cmd)
+                            self.publish_command(cmd) #publish the command, note that this doesn't control the car
+                            ## implementation of control
 
                 except sr.UnknownValueError:
                     self.get_logger().info("Google Speech Recognition could not understand audio")
