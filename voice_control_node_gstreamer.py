@@ -6,6 +6,7 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 import speech_recognition as sr
+from ackermann_msgs.msg import AckermannDriveStamped
 
 class VoiceControlNode(Node):
     def __init__(self):
@@ -59,8 +60,25 @@ class VoiceControlNode(Node):
 
                     for cmd in self.command_list:
                         if cmd in command:
-                            self.publish_command(cmd) #publish the command, note that this doesn't control the car
-                            ## implementation of control
+                            self.publish_command(cmd)
+                            drive_msg = AckermannDriveStamped()
+                            if cmd == "forward":
+                                speed = 1.0
+                            elif cmd == "backward":
+                                speed = -1.0
+                            elif cmd == "stop":
+                                speed = 0
+                            if 1>= speed >= -1 :
+                                drive_msg.drive.speed = speed
+                            
+                            if cmd == "left":
+                                steering_angle = 0.1
+                            elif cmd == "right":
+                                steering_angle = 0.8
+                            if 0.8 >= steering_angle >= 0.1:
+                                drive_msg.drive.steering_angle = steering_angle
+
+                            self.drive_publisher.publish(drive_msg)
 
                 except sr.UnknownValueError:
                     self.get_logger().info("Google Speech Recognition could not understand audio")
